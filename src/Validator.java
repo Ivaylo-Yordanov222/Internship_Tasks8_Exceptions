@@ -1,49 +1,14 @@
 public final class Validator {
-    public static boolean validateDirectoryName(String name){
-
-        char[] nameChars = convertStringToCharArray(name);
-        boolean result = false;
-        for (int i = 0; i < nameChars.length; i++){
-            char currentChar = nameChars[i];
-            if(currentChar == '(' || currentChar == ')' || currentChar == '_' || currentChar == '!' || currentChar == '.' || currentChar == '&' || currentChar == '/'
-            || (currentChar > 47 && currentChar < 58)
-            || (currentChar > 64 && currentChar < 91)
-            || (currentChar > 96 && currentChar < 123)){
-                result = true;
-            }
-            else{
-                return false;
-            }
-        }
-        return result;
+    public static boolean isValidObjectName(String name){
+        return (validateName(name) && validateNameStartsWithSpecialChars(name));
     }
-    public static boolean validateNameStartsWithSpecialChars(String name){
-        String[] splitDirectory = name.split("/");
-        for(int i = 0; i < splitDirectory.length; i++){
-            String currentFolder = splitDirectory[i];
-            if(currentFolder.startsWith("(") || currentFolder.startsWith(")")
-            || currentFolder.startsWith("_") || currentFolder.startsWith("!")
-            || currentFolder.startsWith(".") || currentFolder.startsWith("&")){
-                return false;
-            }
-        }
-        return true;
-    }
-    public static boolean checkFileExtension(String filename){
+    public static boolean isValidFileExtension(String filename){
         String[] splitFile = filename.split("\\.");
         String extension = splitFile[1];
-        if(extension.length() > 6) {
-            return false;
-        }
-        return true;
+        return extension.length() <= 6;
     }
-    public static boolean checkIsFile(String filename){
-        String[] splitFile = filename.split("\\.");
-        if(splitFile.length == 1){
-            //is not a file
-            return false;
-        }
-        return true;
+    public static boolean isFile(String name){
+        return name.contains(".");
     }
     private static char[] convertStringToCharArray(String str){
         char[] chars = new char[str.length()];
@@ -52,13 +17,31 @@ public final class Validator {
         }
         return chars;
     }
-    public static boolean checkDirectoryExists(String directoryName){
-        for (FileSystemObject fo : FileSystem.getFileSystem()){
-            if(fo.getName().equals(directoryName))
-            {
-                return true;
+    private static boolean validateName(String name){
+
+        char[] nameChars = convertStringToCharArray(name);
+        boolean result = false;
+        for (char currentChar : nameChars) {
+            if (currentChar == '(' || currentChar == ')' || currentChar == '_' || currentChar == '!' || currentChar == '&' || currentChar == '/' || currentChar == '.'
+                    || (currentChar > 47 && currentChar < 58)
+                    || (currentChar > 64 && currentChar < 91)
+                    || (currentChar > 96 && currentChar < 123)) {
+                result = true;
+            } else {
+                return false;
             }
         }
-         return false;
+        return result;
+    }
+    private static boolean validateNameStartsWithSpecialChars(String name){
+        String[] splitDirectory = name.split("/");
+        for (String currentFolder : splitDirectory) {
+            if (currentFolder.startsWith("(") || currentFolder.startsWith(")")
+                    || currentFolder.startsWith("_") || currentFolder.startsWith("!")
+                    || currentFolder.startsWith(".") || currentFolder.startsWith("&")) {
+                return false;
+            }
+        }
+        return true;
     }
 }

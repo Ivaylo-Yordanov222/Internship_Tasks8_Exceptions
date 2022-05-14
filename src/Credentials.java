@@ -19,7 +19,7 @@ public class Credentials {
         return password;
     }
 
-    public void setPassword(String password) {
+    private void setPassword(String password) {
         this.password = password;
     }
 
